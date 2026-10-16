@@ -21,7 +21,7 @@ for(const name of new Set(paths)){
 try{
   for(const line of git('rev-list','--objects','--all').split('\n').filter(Boolean)){
     const [oid,...parts]=line.split(' ');if(!parts.length||git('cat-file','-t',oid).trim()!=='blob')continue;
-    inspect('history/'+parts.join(' '),execFileSync('git',['cat-file','blob',oid]));history++;
+    inspect('history/'+parts.join(' '),execFileSync('git',['cat-file','blob',oid],{maxBuffer:64*1024*1024,stdio:['ignore','pipe','pipe']}));history++;
   }
   inspect('commit metadata',Buffer.from(git('log','--all','--format=%ae%x00%ce%x00%B')));
 }catch(error){if(git('rev-list','--all').trim())throw error;}
